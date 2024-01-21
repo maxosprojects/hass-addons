@@ -1,0 +1,65 @@
+logs:
+  configs:
+  - clients:
+    - basic_auth:
+        password: ${TOKEN}
+        username: ${GCLOUD_HOSTED_LOGS_ID}
+      url: https://logs-prod-021.grafana.net/loki/api/v1/push
+    name: integrations
+    positions:
+      filename: /data/positions.yaml
+    scrape_configs:
+      # Add here any snippet that belongs to the `logs.configs.scrape_configs` section.
+      # For a correct indentation, paste snippets copied from Grafana Cloud at the beginning of the line.
+    - job_name: integrations/node_exporter_journal_scrape
+      journal:
+        max_age: 24h
+        labels:
+          instance: hass
+          job: integrations/node_exporter
+      relabel_configs:
+      - source_labels: ['__journal__systemd_unit']
+        target_label: 'unit'
+      - source_labels: ['__journal__boot_id']
+        target_label: 'boot_id'
+      - source_labels: ['__journal__transport']
+        target_label: 'transport'
+      - source_labels: ['__journal_priority_keyword']
+        target_label: 'level'
+#    - job_name: integrations/node_exporter_direct_scrape
+#      static_configs:
+#      - targets:
+#        - localhost
+#        labels:
+#          instance: hass
+#          __path__: /var/log/{syslog,messages,*.log}
+#          job: integrations/node_exporter
+    - job_name: integrations/docker
+      docker_sd_configs:
+        - host: unix:///var/run/docker.sock
+          refresh_interval: 5s
+          # Only scrape logs of the listed containers
+          filters:
+            - name: name
+              values:
+                - 'hassio_supervisor-*'
+                - 'homeassistant-*'
+                - 'c33755f6_kasa_reboot'
+      relabel_configs:
+        - action: replace
+          replacement: integrations/docker
+          source_labels:
+            - __meta_docker_container_id
+          target_label: job
+        - action: replace
+          replacement: hass
+          source_labels:
+            - __meta_docker_container_id
+          target_label: instance
+        - source_labels:
+            - __meta_docker_container_name
+          regex: '/(.*)'
+          target_label: container
+        - source_labels:
+            - __meta_docker_container_log_stream
+          target_label: stream

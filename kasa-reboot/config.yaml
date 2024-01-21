@@ -1,0 +1,12 @@
+name: "Kasa Reboot"
+description: "Kasa Reboot"
+version: "1.0.0"
+slug: "kasa_reboot"
+url: https://github.com/maxosprojects/hass-addons
+init: false
+arch:
+  - amd64
+image: maxosprojects/hass-kasa-reboot
+stdin: true
+map:
+  - homeassistant_config

@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "core.config_entries",
+  "data": {
+    "entries": [
+      {
+        "entry_id": "24ef25b0b8df10da0b5e29fb3fe5a0af",
+        "version": 1,
+        "minor_version": 1,
+        "domain": "radio_browser",
+        "title": "Radio Browser",
+        "data": {},
+        "options": {},
+        "pref_disable_new_entities": false,
+        "pref_disable_polling": false,
+        "source": "onboarding",
+        "unique_id": null,
+        "disabled_by": null
+      },
+      {
+        "entry_id": "0f8c375b9206a7358559584f0542b",
+        "version": 1,
+        "minor_version": 1,
+        "domain": "tplink",
+        "title": "Test switch 1",
+        "data": {
+          "host": "192.168.80.59"
+        },
+        "options": {},
+        "pref_disable_new_entities": false,
+        "pref_disable_polling": false,
+        "source": "user",
+        "unique_id": "11:22:33:44:55:66",
+        "disabled_by": "user"
+      },
+      {
+        "entry_id": "c375b9206a735856855958542b",
+        "version": 1,
+        "minor_version": 1,
+        "domain": "tplink",
+        "title": "Test switch 2",
+        "data": {
+          "host": "192.168.80.61"
+        },
+        "options": {},
+        "pref_disable_new_entities": false,
+        "pref_disable_polling": false,
+        "source": "user",
+        "unique_id": "77:22:33:44:55:66",
+        "disabled_by": null
+      },
+      {
+        "entry_id": "5b9206a56855958542b",
+        "version": 1,
+        "minor_version": 1,
+        "domain": "tplink",
+        "title": "Test switch 3",
+        "data": {
+          "host": "192.168.80.63"
+        },
+        "options": {},
+        "pref_disable_new_entities": false,
+        "pref_disable_polling": false,
+        "source": "user",
+        "unique_id": "88:22:33:44:55:66",
+        "disabled_by": null
+      }
+    ]
+  }
+}

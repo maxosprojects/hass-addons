@@ -1,0 +1,6 @@
+grafana-agent/go-get-token/bin/*
+!grafana-agent/go-get-token/bin/.gitkeep
+kasa-reboot/go-kasa-reboot/bin/*
+!kasa-reboot/go-kasa-reboot/bin/.gitkeep
+
+.idea

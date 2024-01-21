@@ -1,0 +1,4 @@
+# https://developers.home-assistant.io/docs/add-ons/repository#repository-configuration
+name: maxosprojects
+url: 'https://github.com/maxosprojects/hass-addons'
+maintainer: maxosprojects <https://github.com/maxosprojects/hass-addons>
