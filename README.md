@@ -2,6 +2,7 @@
 
 - [Grafana Agent](./grafana-agent/DOCS.md)
 - [Kasa Reboot](./kasa-reboot/DOCS.md)
+- [AWS S3 Backup](./aws-s3-backup/DOCS.md)
 
 ## Install in HA
 

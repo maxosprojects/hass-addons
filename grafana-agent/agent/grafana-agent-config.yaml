@@ -45,6 +45,7 @@ logs:
                 - 'hassio_supervisor-*'
                 - 'homeassistant-*'
                 - 'c33755f6_kasa_reboot'
+                - 'c33755f6_aws_s3_backup'
       relabel_configs:
         - action: replace
           replacement: integrations/docker
