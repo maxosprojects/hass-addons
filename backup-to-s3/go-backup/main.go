@@ -239,6 +239,7 @@ func (s *Syncer) listHaApiFiles() error {
 
 func (s *Syncer) listS3Files() error {
 	s.s3files = map[string]bool{}
+	logInfo("Listing S3...")
 
 	var continueToken *string
 	for {
