@@ -33,7 +33,7 @@ See [README](https://github.com/maxosprojects/hass-addons)
 
 #### Build image
 
-Image tag is formed after the version in [config.yaml](./kasa-reboot/config.yaml).
+Image tag is formed after the version in [config.yaml](./config.yaml).
 
 ```shell
 docker build --tag=maxosprojects/hass-kasa-reboot:1.0.0 .
