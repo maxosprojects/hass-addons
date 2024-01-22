@@ -15,5 +15,7 @@ COPY agent/grafana-agent-config.yaml /etc/agent/agent.yaml
 COPY agent/run.sh /
 RUN chmod a+x /run.sh
 
+# Default entrypoint from the base image does not pass through the TZ env var for some reason
 ENTRYPOINT []
+
 CMD ["/run.sh"]

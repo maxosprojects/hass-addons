@@ -2,16 +2,16 @@ ARG BUILD_FROM
 
 FROM golang:1.21.4-bullseye as golang
 
-COPY go-kasa-reboot /kasa-reboot
-WORKDIR /kasa-reboot
-RUN CGO_ENABLED=0 go build -o bin/go-kasa-reboot
+COPY go-backup /go-backup
+WORKDIR /go-backup
+RUN CGO_ENABLED=0 go build -o bin/go-backup
 
 # FROM $BUILD_FROM
 FROM homeassistant/amd64-base:latest
 
-COPY --from=golang /kasa-reboot/bin/go-kasa-reboot /go-kasa-reboot
+COPY --from=golang /go-backup/bin/go-backup /go-backup
 
 # Default entrypoint from the base image does not pass through the TZ env var for some reason
 ENTRYPOINT []
 
-CMD ["/go-kasa-reboot"]
+CMD ["/go-backup"]
