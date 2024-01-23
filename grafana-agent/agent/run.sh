@@ -1,10 +1,7 @@
 #!/bin/bash
 set -e
 
-export GCLOUD_HOSTED_LOGS_ID=$(/get-token gcloud_hosted_logs_id)
-export TOKEN=$(/get-token grafana_cloud_token)
-
-# echo "TOKEN=$TOKEN"
+/go-config
 # sleep infinity
 
-/bin/grafana-agent --config.file=/etc/agent/agent.yaml --metrics.wal-directory=/data/wal -config.expand-env
+/bin/grafana-agent --config.file=/grafana-agent-config.yaml --metrics.wal-directory=/data/wal

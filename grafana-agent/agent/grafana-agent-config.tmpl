@@ -2,8 +2,8 @@ logs:
   configs:
   - clients:
     - basic_auth:
-        password: ${TOKEN}
-        username: ${GCLOUD_HOSTED_LOGS_ID}
+        password: {{ .grafana_cloud_token }}
+        username: {{ .gcloud_hosted_logs_id }}
       url: https://logs-prod-021.grafana.net/loki/api/v1/push
     name: integrations
     positions:
@@ -42,10 +42,9 @@ logs:
           filters:
             - name: name
               values:
-                - 'hassio_supervisor-*'
-                - 'homeassistant-*'
-                - 'c33755f6_kasa_reboot'
-                - 'c33755f6_aws_s3_backup'
+                {{- range .containers }}
+                - {{ . }}
+                {{- end }}
       relabel_configs:
         - action: replace
           replacement: integrations/docker

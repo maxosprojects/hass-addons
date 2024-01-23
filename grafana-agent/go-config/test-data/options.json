@@ -1,0 +1,9 @@
+{
+  "gcloud_hosted_logs_id": "the id",
+  "grafana_cloud_token": "the token",
+  "containers": [
+    "container1",
+    "container2",
+    "container3"
+  ]
+}

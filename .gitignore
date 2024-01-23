@@ -1,5 +1,7 @@
-grafana-agent/go-get-token/bin/*
-!grafana-agent/go-get-token/bin/.gitkeep
+grafana-agent/go-config/bin/*
+!grafana-agent/go-config/bin/.gitkeep
+grafana-agent/go-config/test-data/result.yaml
+
 kasa-reboot/go-kasa-reboot/bin/*
 !kasa-reboot/go-kasa-reboot/bin/.gitkeep
 

@@ -22,11 +22,11 @@ See [README](https://github.com/maxosprojects/hass-addons)
 
 #### Build image
 
-Image tag is formed after the version of HA where it was confirmed to work and the version of Grafana Agent.
+Image tag is formed after the version of the addon.
 
 ```shell
-docker build --tag=maxosprojects/hass-grafana-agent:ha-2024.1.3-ga-v0.39.0 .
-docker push maxosprojects/hass-grafana-agent:ha-2024.1.3-ga-v0.39.0
+docker build --tag=maxosprojects/hass-grafana-agent:1.0.0 .
+docker push maxosprojects/hass-grafana-agent:1.0.0
 ```
 
 #### Deploy locally

@@ -1,0 +1,15 @@
+logs:
+  configs:
+  - clients:
+    - basic_auth:
+        password: the token
+        username: the id
+    - job_name: integrations/docker
+      docker_sd_configs:
+        - host: unix:///var/run/docker.sock
+          filters:
+            - name: name
+              values:
+                - container1
+                - container2
+                - container3
