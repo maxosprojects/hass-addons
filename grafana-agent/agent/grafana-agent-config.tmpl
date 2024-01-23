@@ -43,7 +43,7 @@ logs:
             - name: name
               values:
                 {{- range .containers }}
-                - {{ . }}
+                - '{{ . }}'
                 {{- end }}
       relabel_configs:
         - action: replace
