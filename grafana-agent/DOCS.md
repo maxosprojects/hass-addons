@@ -25,8 +25,8 @@ See [README](https://github.com/maxosprojects/hass-addons)
 Image tag is formed after the version of the addon.
 
 ```shell
-docker build --tag=maxosprojects/hass-grafana-agent:1.0.0 .
-docker push maxosprojects/hass-grafana-agent:1.0.0
+docker build --tag=maxosprojects/hass-grafana-agent:<ADDON VERSION> .
+docker push maxosprojects/hass-grafana-agent:<ADDON VERSION>
 ```
 
 #### Deploy locally
