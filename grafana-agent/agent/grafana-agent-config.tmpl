@@ -14,6 +14,7 @@ logs:
     - job_name: integrations/node_exporter_journal_scrape
       journal:
         max_age: 24h
+        path: /var/log/journal
         labels:
           instance: hass
           job: integrations/node_exporter
