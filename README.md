@@ -15,7 +15,7 @@ These steps are to be done only once:
 
 ## Update in HA
 
-To update the version, once it's available:
+To update the version, once it's available in DockerHub (or when `image` is commented out in `config.yaml`):
 1. Settings > Addons > ADD-ON STORE
 2. In the top right menu select `Check for updates` and reload the page
 

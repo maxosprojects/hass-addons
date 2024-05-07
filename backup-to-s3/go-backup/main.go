@@ -129,6 +129,12 @@ func (s *Syncer) syncBackups(currFiles map[string]bool) error {
 
 	for currFile, _ := range currFiles {
 		filename := s.sluggedFileNameToNormalName[currFile]
+
+		if filename == "" {
+			log.Printf("File '%s' doesn't have corresponding record in DB yet, skipping for now", currFile)
+			return nil
+		}
+
 		if !s.s3files[filename] {
 			log.Printf("Uploading '%s' as '%s'", currFile, filename)
 			err = s.upload(currFile, filename)
