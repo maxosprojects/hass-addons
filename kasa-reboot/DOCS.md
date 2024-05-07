@@ -1,6 +1,9 @@
 # Home Assistant Addon: Kasa Reboot
 
-See [README](https://github.com/maxosprojects/hass-addons)
+This addon accepts reboot command on stdin, pulls all TPLink devices from `/homeassistant/.storage/core.config_entries` 
+on command and reboots all that are not disabled in HA.
+
+Also, see [README](https://github.com/maxosprojects/hass-addons)
 
 ## Use in HA
 
