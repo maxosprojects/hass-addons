@@ -1,6 +1,6 @@
 name: "Backup to S3"
 description: "Backup to S3"
-version: "1.0.2"
+version: "1.0.3"
 slug: "backup_to_s3"
 url: https://github.com/maxosprojects/hass-addons
 init: false
@@ -17,6 +17,8 @@ options:
   bucket_region: us-west-2
   storage_class: STANDARD
   files_check_interval: 10s
+  backup_dir: /backup
+  supervisor_api: http://supervisor/backups
 schema:
   aws_access_key: str
   aws_secret_access_key: password
@@ -24,5 +26,7 @@ schema:
   bucket_region: list(us-east-1|us-east-2|us-west-1|us-west-2|af-south-1|ap-east-1|ap-south-2|ap-southeast-3|ap-southeast-4|ap-south-1|ap-northeast-3|ap-northeast-2|ap-southeast-1|ap-southeast-2|ap-northeast-1|ca-central-1|eu-central-1|eu-west-1|eu-west-2|eu-south-1|eu-west-3|eu-south-2|eu-north-1|eu-central-2|me-south-1|me-central-1|sa-east-1|us-gov-east-1|us-gov-west-1)
   storage_class: list(STANDARD|REDUCED_REDUNDANCY|STANDARD_IA|ONEZONE_IA|INTELLIGENT_TIERING|GLACIER|DEEP_ARCHIVE)
   files_check_interval: str
+  backup_dir: str
+  supervisor_api: str
 map:
   - backup:ro

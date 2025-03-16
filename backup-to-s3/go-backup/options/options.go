@@ -1,4 +1,4 @@
-package main
+package options
 
 import (
 	"encoding/json"
@@ -8,8 +8,6 @@ import (
 	"time"
 )
 
-var optionsPath = "/data/options.json"
-
 type Options struct {
 	FilesCheckInterval time.Duration
 	AwsAccessKey       string `json:"aws_access_key"`
@@ -18,11 +16,14 @@ type Options struct {
 	BucketRegion       string `json:"bucket_region"`
 	StorageClass       string `json:"storage_class"`
 
+	BackupDir     string `json:"backup_dir"`
+	SupervisorApi string `json:"supervisor_api"`
+
 	// Temporary location for unmarshalling. Use FilesCheckInterval instead
 	FilesCheckIntervalStr string `json:"files_check_interval"`
 }
 
-func NewOptions() (*Options, error) {
+func New(optionsPath string) (*Options, error) {
 	jsonFile, err := os.Open(optionsPath)
 	if err != nil {
 		return nil, err

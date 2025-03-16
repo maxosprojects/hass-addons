@@ -6,7 +6,7 @@
 
 ## Install in HA
 
-These steps are to be done only once:
+These steps are to be followed only once:
 1. Settings > Addons > ADD-ON STORE
 2. In the top right menu select `Repositories`
 3. Add new repository: `https://github.com/maxosprojects/hass-addons`
