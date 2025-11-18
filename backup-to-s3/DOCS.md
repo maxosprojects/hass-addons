@@ -22,8 +22,8 @@ See [README](https://github.com/maxosprojects/hass-addons)
 Image tag is formed after the version in [config.yaml](./config.yaml).
 
 ```shell
-docker build --tag=maxosprojects/hass-backup-to-s3:1.1.0 .
-docker push maxosprojects/hass-backup-to-s3:1.1.0
+docker build --tag=maxosprojects/hass-backup-to-s3:1.1.1 .
+docker push maxosprojects/hass-backup-to-s3:1.1.1
 ```
 
 #### Deploy locally
@@ -31,3 +31,4 @@ docker push maxosprojects/hass-backup-to-s3:1.1.0
 1. See [README](https://github.com/maxosprojects/hass-addons)
 2. Click on the addon in the `Local` repo > Build > Start
 3. Enable `Watchdog`
+

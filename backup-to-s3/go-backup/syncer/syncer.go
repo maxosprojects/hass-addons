@@ -69,8 +69,6 @@ func (s *Syncer) Run() {
 		}
 
 		s.timer.Succeeded()
-
-		break
 	}
 }
 
