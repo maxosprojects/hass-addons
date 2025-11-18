@@ -22,8 +22,8 @@ See [README](https://github.com/maxosprojects/hass-addons)
 Image tag is formed after the version in [config.yaml](./config.yaml).
 
 ```shell
-docker build --tag=maxosprojects/hass-backup-to-s3:1.0.3 .
-docker push maxosprojects/hass-backup-to-s3:1.0.3
+docker build --tag=maxosprojects/hass-backup-to-s3:1.1.0 .
+docker push maxosprojects/hass-backup-to-s3:1.1.0
 ```
 
 #### Deploy locally

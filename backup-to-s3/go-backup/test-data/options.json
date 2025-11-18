@@ -5,6 +5,5 @@
   "bucket_region": "us-west-2",
   "storage_class": "STANDARD",
   "files_check_interval": "10s",
-  "backup_dir": "../test-data/backup",
   "supervisor_api": "http://homeassistant.local:8093/backups"
 }

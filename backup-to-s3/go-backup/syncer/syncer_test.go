@@ -1,10 +1,10 @@
 package syncer
 
 import (
-	"backup-to-s3/fileLister"
 	"backup-to-s3/logging"
+	"backup-to-s3/supervisor"
+	"backup-to-s3/testUtil"
 	"fmt"
-	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -16,33 +16,21 @@ func (m *mockS3Client) ListS3Files() (map[string]bool, error) {
 	return m.files, nil
 }
 
-func (m *mockS3Client) Upload(localFilename, s3Filename string) error {
+func (m *mockS3Client) Upload(body []byte, s3Filename string) error {
 	m.files[s3Filename] = true
 	return nil
 }
 
-type mockFileLister struct {
-	files  []string
-	lister fileLister.FileLister
-}
-
-func (m *mockFileLister) ListCurrFiles() ([]string, error) {
-	return m.files, nil
-}
-
-func (m *mockFileLister) GetNewFormat(filename string) (string, bool) {
-	if m.lister == nil {
-		m.lister = fileLister.New(nil)
-	}
-	return m.lister.GetNewFormat(filename)
-}
-
 type mockSupervisor struct {
-	files map[string]string
+	results []*supervisor.Result
 }
 
-func (m *mockSupervisor) ListHaApiFiles() (map[string]string, error) {
-	return m.files, nil
+func (m *mockSupervisor) ListHaApiFiles() ([]*supervisor.Result, error) {
+	return m.results, nil
+}
+
+func (m *mockSupervisor) Download(slug string) ([]byte, error) {
+	return nil, nil
 }
 
 type mockTimer struct {
@@ -84,25 +72,31 @@ func (m *mockLogger) Info(format string, args ...any) {
 func TestSyncer_run(t *testing.T) {
 	tests := []struct {
 		name         string
-		localFiles   []string
-		haFiles      map[string]string
+		haFiles      []*supervisor.Result
 		times        int
 		expectedLogs []string
 		s3Files      map[string]bool
 	}{
 		{
-			name: "run",
-			localFiles: []string{
-				"40ab60ed.tar",
-				"12ee8cd2.tar",
-				"full-date-2025-03-39-1_2025-03-09_18.26_78328791.tar",
-			},
-			haFiles: map[string]string{
-				"40ab60ed.tar": "full-date-2024-12-25-1.tar",
-				"12ee8cd2.tar": "full-date-2024-07-24-1.tar",
+			name: "uploads one file",
+			haFiles: []*supervisor.Result{
+				{
+					Slug:       "40ab60ed",
+					S3Filename: "full-date-2024-12-25-1.tar",
+				},
+				{
+					Slug:       "f33350ce",
+					S3Filename: "Automatic backup 2025.7.2.tar",
+				},
 
-				"full-date-2024-12-25-1.tar": "full-date-2024-12-25-1.tar",
-				"full-date-2024-07-24-1.tar": "full-date-2024-07-24-1.tar",
+				{
+					Slug:       "slug1",
+					S3Filename: "full-date-2024-12-25-1.tar",
+				},
+				{
+					Slug:       "slug2",
+					S3Filename: "Automatic backup 2025.7.2.tar",
+				},
 			},
 			s3Files: map[string]bool{
 				"full-date-2024-12-25-1.tar": true,
@@ -110,9 +104,7 @@ func TestSyncer_run(t *testing.T) {
 			times: 2,
 			expectedLogs: []string{
 				"=INFO= Addon ready",
-				"=INFO= Uploading '12ee8cd2.tar' as 'full-date-2024-07-24-1.tar'",
-				"=WARNING= File 'full-date-2025-03-39-1_2025-03-09_18.26_78328791.tar' doesn't have corresponding record in DB yet, will try sync again later",
-				"=WARNING= File 'full-date-2025-03-39-1_2025-03-09_18.26_78328791.tar' doesn't have corresponding record in DB yet, will try sync again later",
+				"=INFO= Uploading 'Automatic backup 2025.7.2.tar'",
 			},
 		},
 	}
@@ -127,11 +119,8 @@ func TestSyncer_run(t *testing.T) {
 			s.s3client = &mockS3Client{
 				files: tt.s3Files,
 			}
-			s.fileLister = &mockFileLister{
-				files: tt.localFiles,
-			}
 			s.supervisor = &mockSupervisor{
-				files: tt.haFiles,
+				results: tt.haFiles,
 			}
 			tmr := &mockTimer{
 				ch: make(chan bool),
@@ -144,7 +133,7 @@ func TestSyncer_run(t *testing.T) {
 				<-tmr.ch
 			}
 
-			require.Equal(t, tt.expectedLogs, logger.records)
+			testUtil.RequireNoDiff(t, tt.expectedLogs, logger.records)
 		})
 	}
 }

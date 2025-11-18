@@ -1,7 +1,6 @@
 package syncer
 
 import (
-	"backup-to-s3/fileLister"
 	"backup-to-s3/logging"
 	"backup-to-s3/options"
 	"backup-to-s3/s3client"
@@ -10,7 +9,6 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"sort"
 	"syscall"
 	"time"
 )
@@ -18,7 +16,6 @@ import (
 type Syncer struct {
 	lastFiles  map[string]bool
 	logger     logging.Logger
-	fileLister fileLister.FileLister
 	s3client   s3client.S3Client
 	opts       *options.Options
 	supervisor supervisor.Supervisor
@@ -40,7 +37,6 @@ func New(logger logging.Logger) *Syncer {
 
 	s.opts = opts
 
-	s.fileLister = fileLister.New(s.opts)
 	s.supervisor = supervisor.New(s.opts)
 	s.timer = timing.New(s.opts.FilesCheckInterval, 10*time.Minute)
 
@@ -56,7 +52,7 @@ func (s *Syncer) Run() {
 	s.logger.Info("Addon ready")
 
 	for {
-		currFiles, err := s.fileLister.ListCurrFiles()
+		currFiles, err := s.supervisor.ListHaApiFiles()
 		if err != nil {
 			s.logger.Error(err)
 			s.timer.Failed()
@@ -73,56 +69,46 @@ func (s *Syncer) Run() {
 		}
 
 		s.timer.Succeeded()
+
+		break
 	}
 }
 
-func (s *Syncer) syncBackups(currFiles []string) error {
+func (s *Syncer) syncBackups(currFiles []*supervisor.Result) error {
 	s3files, err := s.s3client.ListS3Files()
 	if err != nil {
 		return err
 	}
 
-	haBackupFiles, err := s.supervisor.ListHaApiFiles()
-	if err != nil {
-		return err
-	}
-
-	// Sort to have predictable processing order for tests
-	sort.Strings(currFiles)
-
-	for _, localFilename := range currFiles {
-		filenameKey, _ := s.fileLister.GetNewFormat(localFilename)
-		s3Filename, inDb := haBackupFiles[filenameKey]
-
-		if !inDb {
-			s.logger.Warn(fmt.Sprintf("File '%s' doesn't have corresponding record in DB yet, will try sync again later",
-				localFilename))
-			return nil
-		}
-
-		if !s3files[s3Filename] {
-			s.logger.Info(fmt.Sprintf("Uploading '%s' as '%s'", localFilename, s3Filename))
-			err = s.s3client.Upload(localFilename, s3Filename)
-			if err != nil {
-				return err
+	for _, currFile := range currFiles {
+		if !s3files[currFile.S3Filename] {
+			s.logger.Info(fmt.Sprintf("Downloading '%s'", currFile.S3Filename))
+			body, err2 := s.supervisor.Download(currFile.Slug)
+			if err2 != nil {
+				return err2
 			}
-			s.lastFiles[localFilename] = true
+			s.logger.Info(fmt.Sprintf("Uploading '%s'", currFile.S3Filename))
+			err2 = s.s3client.Upload(body, currFile.S3Filename)
+			if err2 != nil {
+				return err2
+			}
+			s.lastFiles[currFile.S3Filename] = true
 		}
 	}
 
-	// The addon may run for a long time. Reassign lastFiles to prevent accumulating names of local backup files that
-	// may have been already deleted from disk.
+	// The addon may run for a long time. If sync succeeds, reassign lastFiles to prevent accumulating names of HA
+	// backup files that may have been already deleted from HA.
 	s.lastFiles = map[string]bool{}
-	for _, filename := range currFiles {
-		s.lastFiles[filename] = true
+	for _, currFile := range currFiles {
+		s.lastFiles[currFile.S3Filename] = true
 	}
 
 	return nil
 }
 
-func (s *Syncer) hasNewFiles(currFiles []string) bool {
-	for _, filename := range currFiles {
-		if _, exists := s.lastFiles[filename]; !exists {
+func (s *Syncer) hasNewFiles(currFiles []*supervisor.Result) bool {
+	for _, currFile := range currFiles {
+		if _, exists := s.lastFiles[currFile.S3Filename]; !exists {
 			return true
 		}
 	}

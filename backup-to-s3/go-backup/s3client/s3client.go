@@ -7,18 +7,16 @@ import (
 	"context"
 	"crypto/md5"
 	"encoding/base64"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"io"
-	"os"
-	"path/filepath"
 )
 
 type S3Client interface {
 	ListS3Files() (map[string]bool, error)
-	Upload(localFilename, s3Filename string) error
+	Upload(body []byte, s3Filename string) error
 }
 
 type client struct {
@@ -50,7 +48,7 @@ func (c *client) ListS3Files() (map[string]bool, error) {
 
 	var continueToken *string
 	for {
-		resp, err := c.s3Client.ListObjectsV2(context.TODO(), &s3.ListObjectsV2Input{
+		resp, err := c.s3Client.ListObjectsV2(context.Background(), &s3.ListObjectsV2Input{
 			Bucket:            aws.String(c.opts.BucketName),
 			ContinuationToken: continueToken,
 		})
@@ -70,34 +68,16 @@ func (c *client) ListS3Files() (map[string]bool, error) {
 	return s3files, nil
 }
 
-func (c *client) Upload(localFilename, s3Filename string) error {
-	fullFilePath := filepath.Join(c.opts.BackupDir, localFilename)
-
-	file, err := os.Open(fullFilePath)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	stat, err := file.Stat()
-	if err != nil {
-		return err
-	}
-
-	data, err := io.ReadAll(file)
-	if err != nil {
-		return err
-	}
-
-	md5Sum := md5.Sum(data)
+func (c *client) Upload(body []byte, s3Filename string) error {
+	md5Sum := md5.Sum(body)
 	md5SumBase64 := base64.StdEncoding.EncodeToString(md5Sum[:])
 
-	_, err = c.s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
+	_, err := c.s3Client.PutObject(context.Background(), &s3.PutObjectInput{
 		Bucket:        aws.String(c.opts.BucketName),
 		Key:           aws.String(s3Filename),
-		Body:          bytes.NewReader(data),
-		ContentLength: aws.Int64(stat.Size()),
+		Body:          bytes.NewReader(body),
 		ContentType:   aws.String("application/x-tar"),
+		ContentLength: aws.Int64(int64(len(body))),
 		ContentMD5:    aws.String(md5SumBase64),
 	})
 

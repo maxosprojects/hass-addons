@@ -16,7 +16,6 @@ type Options struct {
 	BucketRegion       string `json:"bucket_region"`
 	StorageClass       string `json:"storage_class"`
 
-	BackupDir     string `json:"backup_dir"`
 	SupervisorApi string `json:"supervisor_api"`
 
 	// Temporary location for unmarshalling. Use FilesCheckInterval instead
