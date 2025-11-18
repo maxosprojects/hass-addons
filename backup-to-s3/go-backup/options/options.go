@@ -46,7 +46,7 @@ func New(optionsPath string) (*Options, error) {
 	}
 
 	if options.FilesCheckInterval == 0 {
-		return nil, errors.New("interval must not be ero")
+		return nil, errors.New("interval must not be zero")
 	}
 
 	return options, nil
